@@ -1,3 +1,4 @@
+
 # Postman Tricks
 
 - Conceitos e Testes de API
@@ -63,6 +64,9 @@ Muito utilizada em testes que exigem token de autenticação. Exemplo de utiliza
      });
 Este pre-request faz um post em uma rota que retorna o token de autenticação e posteriormente é setado como variável de ambiente na linha:  
 >pm.environment.set('access_token', responseJson.access_token)
+
+Também temos a opção de setar qual será a próxima rota desta collection que deve executar após a execução da atual:
+>postman.setNextRequest('Postman Echo PUT')
 
 Outro exemplo de prequest mas agora com outro tipo de body
 
@@ -201,7 +205,10 @@ Neste teste acima é validado o tipo de cada atributo, lembrando que é possíve
     }
     ]
 
- **TESTES**
+   
+
+
+**TESTES**
  
    
 
@@ -213,7 +220,7 @@ Neste teste acima é validado o tipo de cada atributo, lembrando que é possíve
     tests["UNA - CodigoIES"] = responseJSON[1].codigoInstituicao === 3
     tests["UNA - CodEstabelecimento IES"] = responseJSON[1].codigoEstabelecimentoLio === "123"
 
-## Validação do todo o corpo do response (responseBody)
+## Validação do todos o corpo do response (responseBody)
 
     const expectBody = 
     {
@@ -228,28 +235,28 @@ Neste teste acima é validado o tipo de cada atributo, lembrando que é possíve
     pm.test("Body is correct", function () {
         pm.response.to.have.body(expectBody);
     });  
-
-## Validação do tipo da Resposta
+    
+## Validação do Tipo da Resposta
 
     /* response has this structure:
     {
-    "name": "Jane",
-    "age": 29,
-    "hobbies": [
+      "name": "Jane",
+      "age": 29,
+      "hobbies": [
         "skating",
         "painting"
-    ],
-    "email": null
+      ],
+      "email": null
     }
     */
     const jsonData = pm.response.json();
     pm.test("Test data type of the response", () => {
-    pm.expect(jsonData).to.be.an("object");
-    pm.expect(jsonData.name).to.be.a("string");
-    pm.expect(jsonData.age).to.be.a("number");
-    pm.expect(jsonData.hobbies).to.be.an("array");
-    pm.expect(jsonData.website).to.be.undefined;
-    pm.expect(jsonData.email).to.be.null;
+      pm.expect(jsonData).to.be.an("object");
+      pm.expect(jsonData.name).to.be.a("string");
+      pm.expect(jsonData.age).to.be.a("number");
+      pm.expect(jsonData.hobbies).to.be.an("array");
+      pm.expect(jsonData.website).to.be.undefined;
+      pm.expect(jsonData.email).to.be.null;
     });
 
 ## Automatizando os Testes com Newman
@@ -259,6 +266,17 @@ Necessário instalar o NodeJs e abrir o cmd, executar o seguinte comando para in
 Rodando testes com newman:
 >newman run examples/sample-collection.json
 
+## Importando arquivos durante a execução
+>newman run newman run /path/to/collection.json -e /path/to/enviroment.json -d, --iteration-data NOMEARQUIVO.txt 
+
+Lembre-se de colocar o cabeçalho do arquivo que será importado com o mesmo nome da variável, exemplo
+
+. Cabeçalho do arquivo como cod_cpf
+
+. Variável no ambiente(enviroment) do postman com o nome cod_cpf
+
+. Consumo na requisição ficará como {{cod_cpf}}
+
 ### Relatório HTML
 Instalar a dependência 
 >npm install -g newman-reporter-html 
@@ -266,9 +284,22 @@ Instalar a dependência
 Rodando os testes
 >newman run /path/to/collection.json -r cli,html
 
+### Relatório HTML EXTRA Completo e Mais apresentável
+Instalar a dependência 
+>npm install -g newman-reporter-htmlextra
+
+Rodando os testes
+>newman run /path/to/collection.json -e /path/to/enviroment.json -r htmlextra --reporter-htmlextra-darkTheme
+
+ou também importando um arquivo
+>newman run newman run /path/to/collection.json -e /path/to/enviroment.json -d, --iteration-data /path/to/nomearquivo.txt -r htmlextra --reporter-htmlextra-darkTheme
+
+![imagem](https://i.imgur.com/5ZDNsA4.png)
+
+
 Dentro da pasta da sua Collection será criada uma pasta com o nome "newman" e dentro dela vai existir um arquivo HTML em cada execução dos testes.
 
-### Relatório XML (para aba de testes no AzureDevOps)
+### Relatório XML (aba de testes no AzureDevOps)
 Instalar a dependência 
 >npm install -g newman-reporter-html 
 
@@ -276,6 +307,7 @@ Rodando os testes
 >newman run /path/to/collection.json -r cli,junit
 
 Dentro da pasta da sua Collection será criada uma pasta com o nome "newman" e dentro dela vai existir um arquivo XML em cada execução dos testes.
+
 ## Rodando testes Newman + Docker
 Instale o Docker Desktop e abra o PowerShell, executar o comando abaixo para baixar a imagem que contém as dependências do NPM.
 >docker pull postman/newman
@@ -289,6 +321,3 @@ Sem nenhum no momento, volte mais tarde.
 
 
 https://medium.com/better-practices/consumer-driven-contract-testing-using-postman-f3580dba5370
-
-
-# Sayoan Oliveira github.com/sayoan 
