@@ -91,6 +91,11 @@ Outro exemplo de prequest mas agora com outro tipo de body
             }
     });
 
+Gerando dados randomicos baseados num array
+
+    const cep = ['1', '2', '3'];
+    pm.environment.set('cep', cep[Math.floor(Math.random() * cep.length)]);
+
 ## Variáveis de Ambiente
 Pegando a variável de Ambiente
 >pm.environment.get("variable_key");
